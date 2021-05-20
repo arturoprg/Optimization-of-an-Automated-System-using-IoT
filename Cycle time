@@ -1,0 +1,17 @@
+% TODO - Replace the [] with channel ID to read data from:
+readChannelID = [1393723];
+% TODO - Replace the [] with the Field ID to read data from:
+fieldID1 = [2];
+% Channel Read API Key 
+% If your channel is private, then enter the read API
+% Key between the '' below: 
+readAPIKey = '01CNOFLM71HV5VVP';
+
+[cycle, time] = thingSpeakRead(readChannelID, 'Field', fieldID1, 'ReadKey', readAPIKey, 'NumPoints', 100);
+
+average = mean(cycle)+cycle*0;
+plot(time,cycle)
+hold on
+plot(time,average,'--r')
+ylabel('Cycle time (s)')
+legend('Cycle time','Average')
