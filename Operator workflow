@@ -1,0 +1,49 @@
+readChannelID = [1383581];  % Channel ID
+fieldID = [2];              % Field where data is read
+readAPIKey = 'ZPCCU5N4EGNIWT7Q';    % Read key
+
+cont = 1;                   % Index
+worktime = 0;               % Total worked time
+
+[operator, time] = thingSpeakRead(readChannelID, 'Field', fieldID, 'ReadKey', readAPIKey,'NumDays',1); % Get the information from the last day
+
+% If the sensor value change, save the date and if the operator have gone in or out
+for i = 1:(length(operator)-1)
+    if operator(i) ~= operator(i+1)
+        date(cont) = time(i+1);
+        if operator(i) == 1
+            entry(cont) = "Out";
+        else
+            entry(cont) = "In";
+        end
+        cont = cont +1;
+    end
+end
+
+% Calculate the time that the operator have been in the work space
+for i = 2:length(entry)
+    if entry(i) == "Out"
+        worktime = worktime + seconds(date(i)-date(i-1));
+    end
+end
+
+if entry(end) == "In"
+    worktime = worktime + seconds(time(end)-date(end));
+end
+
+totalHours = worktime/3600 + "h"; % Converts the time from seconds to hours
+
+% Create the message that will be sent
+alert_body = "This is the operator working time:\n";
+for i = 1:length(entry) % Add all the in and out dates
+    alert_body = alert_body + datestr(date(i)) + " - " + entry(i) + "\n";
+end 
+alert_body = alert_body + "\n" +"The operator have work a total amount of "+worktime/3600+"h"; % Add the hours that the operator have been working
+alert_subject = 'Operator workflow report';
+
+% Send the message
+alert_api_key = 'TAKRAYKU2PH8Y6JYA7U0G';
+alert_url= "https://api.thingspeak.com/alerts/send";
+jsonmessage = sprintf(['{"subject": "%s", "body": "%s"}'], alert_subject,alert_body);
+options = weboptions("HeaderFields", {'Thingspeak-Alerts-API-Key', alert_api_key; 'Content-Type','application/json'});
+result = webwrite(alert_url, jsonmessage, options);
