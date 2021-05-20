@@ -1,0 +1,30 @@
+% Template MATLAB code for visualizing data from a channel as a 2D line
+% plot using PLOT function.
+
+% Prior to running this MATLAB code template, assign the channel variables.
+% Set 'readChannelID' to the channel ID of the channel to read from. 
+% Also, assign the read field ID to 'fieldID1'. 
+
+% TODO - Replace the [] with channel ID to read data from:
+readChannelID = [1383581];
+% TODO - Replace the [] with the Field ID to read data from:
+fieldID = [1];
+% Channel Read API Key 
+% If your channel is private, then enter the read API
+% Key between the '' below: 
+readAPIKey = 'ZPCCU5N4EGNIWT7Q';
+[power, time] = thingSpeakRead(readChannelID, 'Field', fieldID, 'ReadKey', readAPIKey,'NumPoints',50);
+cont = 1;
+TF = isnan(power);
+for i = 1:length(TF)
+    if TF(i) == 0
+        powerF(cont) = power(i);
+        timeF(cont) = time(i);
+        cont = cont +1;
+    end
+end
+
+plot(timeF, powerF,'-r');
+title('Total Power Consumption')
+ylabel('Power (kW)')
+
