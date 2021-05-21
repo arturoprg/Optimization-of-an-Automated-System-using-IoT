@@ -1,7 +1,7 @@
 # The code bellow is executed just when the function is initialized
 if initialize:
   # Initialize outputs
-  ray_color = [0.9, 0.9, 0.0, 1.0]
+  led_color = [0.7, 0.7, 0.0, 1.0]
   sensor_state = 0
   setup_data = "{}"
   update_input = "{}"
@@ -33,7 +33,7 @@ else:
     # Setup data to send
     setup_dict = {
       'parameters': {
-        'ip':ip_address
+        'ip':ip_address,
         'force_write':0
       },
       'variables': {
